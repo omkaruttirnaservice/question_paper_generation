@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { sendError } from '../application/utils/commonFunctions.js';
 import { dbStore, getPool } from '../application/config/db.connect.js';
+import ApiError from '../application/utils/ApiError.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const authenticateJWT = (req, res, next) => {
@@ -8,15 +9,21 @@ export const authenticateJWT = (req, res, next) => {
         const authHeader = req.cookies.token || req.headers.authorization;
 
         if (!authHeader) {
-            return res.status(403).json(sendError(res, null, 'Invalid token'));
+            console.log('2');
+            return res.status(403).json({
+                errMsg: 'Invalid token',
+                satus: 403,
+            });
         }
 
         const token = authHeader.replace('Bearer ', '');
 
         jwt.verify(token, JWT_SECRET, async (err, user) => {
             if (err) {
-                console.log(err, '=err authmiddleware');
-                return res.status(403).json(sendError(res, err, 'Invalid token'));
+                return res.status(403).json({
+                    errMsg: err?.message || 'Invalid token',
+                    satus: 403,
+                });
             }
 
             req.user = user;
@@ -64,6 +71,6 @@ export const authenticateJWT = (req, res, next) => {
             return res.status(403).json(sendError(res, err, 'Invalid token'));
         });
     } catch (error) {
-        console.log(error, '==');
+        next(error);
     }
 };
