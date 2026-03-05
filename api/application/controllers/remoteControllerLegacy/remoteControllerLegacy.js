@@ -297,36 +297,61 @@ const remoteControllerLegacy = {
 
         if (!pub_id) throw new ApiError(204, 'Invalid publish id');
 
-        let transact = await sequelize.transaction();
-
         try {
-            await db.tm_student_test_list.bulkCreate(student_list, {
-                transaction: transact,
-            });
-            await db.tm_student_question_paper.bulkCreate(exam_paper, {
-                transaction: transact,
-            });
-            await transact.commit();
+            await db.tm_student_test_list.bulkCreate(student_list);
+            await db.tm_student_question_paper.bulkCreate(exam_paper);
 
             return res.status(200).json({
                 call: 1,
                 message: 'Successfully saved students and their question paper data',
             });
-            // return res
-            //     .status(201)
-            //     .json(
-            //         new ApiResponse(
-            //             201,
-            //             {},
-            //             'Successfully uploaded students and their question paper data'
-            //         )
-            //     );
         } catch (error) {
             console.log(error, '==error==');
-            await transact.rollback();
             throw new ApiError(424, error?.message || 'Something went wrong on server');
         }
     }),
+
+    //    saveExamData: asyncHandler(async (req, res) => {
+    //     console.log(req.body, '==req.body==');
+    //     let { student_list, pub_id, exam_paper } = req.body;
+
+    //     if (student_list.length == 0) throw new ApiError(204, 'No students list found');
+
+    //     if (exam_paper.length == 0) throw new ApiError(204, 'No exams list found');
+
+    //     if (!pub_id) throw new ApiError(204, 'Invalid publish id');
+
+    //     let transact = await sequelize.transaction();
+
+    //     try {
+    //         console.log(db, 'db details');
+    //         await db.tm_student_test_list.bulkCreate(student_list, {
+    //             transaction: transact,
+    //         });
+    //         await db.tm_student_question_paper.bulkCreate(exam_paper, {
+    //             transaction: transact,
+    //         });
+    //         await transact.commit();
+
+    //         return res.status(200).json({
+    //             call: 1,
+    //             message: 'Successfully saved students and their question paper data',
+    //         });
+    //         // return res
+    //         //     .status(201)
+    //         //     .json(
+    //         //         new ApiResponse(
+    //         //             201,
+    //         //             {},
+    //         //             'Successfully uploaded students and their question paper data'
+    //         //         )
+    //         //     );
+    //     } catch (error) {
+    //         console.log(error, '==error==');
+    //         await transact.rollback();
+    //         throw new ApiError(424, error?.message || 'Something went wrong on server');
+    //     }
+    // }),
 
     getCenterData: asyncHandler(async (req, res) => {
         const centerCode = req.params.centerCode;
