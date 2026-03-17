@@ -140,8 +140,6 @@ const reportsController = {
 
         const [_resultDetailsRes] = await reportsModel.getResultData(data);
 
-        console.log(_resultDetailsRes, '=_resultDetailsRes');
-
         if (_resultDetailsRes.length === 0) {
             throw new ApiError(400, 'No students found.');
         }

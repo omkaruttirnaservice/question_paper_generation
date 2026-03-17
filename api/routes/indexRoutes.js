@@ -10,9 +10,10 @@ import saveExamsRouter from './saveExamsRouter.js';
 import studentsAreaRouter from './studentsAreaRouter.js';
 import testsRouter from './testsRouter.js';
 
+import { authenticateJWT } from './authMiddleware.js';
+import pdfRouter from './pdfRouter.js';
 import subjectRouter from './subjectRouter.js';
 import topicRouter from './topicRouter.js';
-import { authenticateJWT } from './authMiddleware.js';
 
 router.use('/topics', authenticateJWT, topicRouter);
 router.use('/subject', authenticateJWT, subjectRouter);
@@ -28,5 +29,7 @@ router.use('/exams', authenticateJWT, saveExamsRouter);
 
 router.use('/remote', authenticateJWT, remoteRouter);
 router.use('/auth', authRoutes);
+
+router.use('/pdf', authenticateJWT, pdfRouter);
 
 export default router;

@@ -73,6 +73,7 @@ const reportsModel = {
 							'id', sub.id,
 							'full_name', CONCAT(sub.sl_f_name,' ',sub.sl_m_name,' ',sub.sl_l_name),
 							'dob', DATE_FORMAT(sub.sl_date_of_birth,'%d-%m-%Y'),
+                            'gender', sub.sl_gender,
 							'post', sub.sl_post,
 							'marks', sub.sfrs_marks_gain,
 							'sfrs_student_roll_no', sub.sfrs_student_roll_no,
@@ -89,7 +90,7 @@ const reportsModel = {
 				) AS result_data
 				FROM 
 				(
-					SELECT sfrs.*, sl.sl_f_name, sl.sl_m_name, sl.sl_l_name, sl.sl_date_of_birth, sl.sl_post,
+					SELECT sfrs.*, sl.sl_f_name, sl.sl_m_name, sl.sl_l_name, sl.sl_date_of_birth, sl.sl_post, sl.sl_gender,
 						COUNT(*) OVER() AS total_count
 					FROM tm_student_final_result_set AS sfrs
 					INNER JOIN tn_student_list sl

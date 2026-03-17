@@ -358,6 +358,19 @@ const studentAreaModel = {
     },
 
     getPresentStudents: async (published_test_id) => {
+        // const q = `
+        // SELECT
+        //     sl.id AS id
+        // FROM tn_student_list AS sl
+        // INNER JOIN tm_publish_test_list ptl
+        // ON sl.sl_batch_no  = ptl.tm_allow_to
+
+        // INNER JOIN tm_student_final_result_set sfrs
+        // ON sfrs.sfrs_publish_id = ptl.id AND sfrs.sfrs_student_id = sl.id
+
+        // WHERE ptl.id = ?
+        // `;
+
         const q = `
         SELECT 
             sl.id AS id
@@ -365,9 +378,8 @@ const studentAreaModel = {
         INNER JOIN tm_publish_test_list ptl 
         ON sl.sl_batch_no  = ptl.tm_allow_to
 
-        INNER JOIN tm_student_final_result_set sfrs 
-        ON sfrs.sfrs_publish_id = ptl.id AND sfrs.sfrs_student_id = sl.id
-
+        INNER JOIN tm_student_test_list stl
+        ON stl.stl_stud_id = sl.sl_roll_number
         WHERE ptl.id = ?
         `;
 

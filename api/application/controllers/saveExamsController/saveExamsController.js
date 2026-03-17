@@ -35,8 +35,8 @@ const saveExamsController = {
                     new ApiResponse(
                         201,
                         {},
-                        'Successfully uploaded students and their question paper data'
-                    )
+                        'Successfully uploaded students and their question paper data',
+                    ),
                 );
         } catch (error) {
             console.log(error, '==error==');
@@ -50,28 +50,26 @@ const saveExamsController = {
         let { stud_roll, pub_test_id } = req.query;
         if (!stud_roll || !pub_test_id) throw new ApiError(400, 'Invalid details passed');
 
-        let [_studentExamDetails] = await saveExamsModel.getStudentExamReportDetails({
+        let solvedPaper = await saveExamsController.getCandiateSolvedExamPaper(
             stud_roll,
             pub_test_id,
+        );
+
+        return res.status(200).json(new ApiResponse(200, solvedPaper, ''));
+    }),
+
+    getCandiateSolvedExamPaper: async (roll_no, ptid) => {
+        let [_studentExamDetails] = await saveExamsModel.getStudentExamReportDetails({
+            stud_roll: roll_no,
+            pub_test_id: ptid,
         });
 
         let [_studQuestionPaper] = await saveExamsModel.getStudentQuestionPaper({
-            stud_roll,
-            pub_test_id,
+            stud_roll: roll_no,
+            pub_test_id: ptid,
         });
 
-        console.log(_studentExamDetails, '==_studentExamDetails==');
-        console.log(_studQuestionPaper, '==_studQuestionPaper==');
-
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    { studExam: _studentExamDetails[0], quePaper: _studQuestionPaper },
-                    ''
-                )
-            );
-    }),
+        return { studExam: _studentExamDetails[0], quePaper: _studQuestionPaper };
+    },
 };
 export default saveExamsController;

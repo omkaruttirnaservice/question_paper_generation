@@ -81,7 +81,8 @@ const remoteModelLegacy = {
     },
 
     getExamListV2: async (data) => {
-		console.log(data.exam_list.exam_list,'data.exam_list')
+        console.log(data.exam_list.exam_list, 'data.exam_list');
+        console.log(db, 'db');
         const results = await db.query(
             `
 			SELECT 

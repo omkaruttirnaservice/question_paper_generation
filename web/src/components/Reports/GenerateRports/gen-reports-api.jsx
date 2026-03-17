@@ -69,7 +69,6 @@ export const getResultViewData = async (viewResultBy) => {
     }
 
     const data = await _res.json();
-    console.log(data, '==data==');
     return data;
 };
 
@@ -126,6 +125,13 @@ export const getCustomResultExcel = async (data) => {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
 };
+
+export const getCandidateResponseSheet = async () => {
+    let _res = await fetch(SERVER_IP + '/api/pdf/v3/candidate-response-sheet', {
+        credentials: 'include',
+    });
+};
+
 
 export const singleCandiatePaper = async ({ studentRollNumber, publishedTestId }) => {
     console.log(studentRollNumber, '==studentRollNumber==');

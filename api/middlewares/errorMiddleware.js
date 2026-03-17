@@ -4,7 +4,7 @@ dotenv.config();
 
 const errorHandler = (err, req, res, next) => {
     let error = err;
-    // console.log(error, 'error');
+    console.log(error, 'error- gloabl handler=========');
     const { originalUrl, method } = req;
 
     console.error(

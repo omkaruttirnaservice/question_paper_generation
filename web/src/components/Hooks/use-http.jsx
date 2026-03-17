@@ -39,20 +39,12 @@ const useHttp = () => {
             callback(data);
         } catch (err) {
             console.log(err, '----');
+            console.log(err.message, '----');
             dispatch(loaderActions.hideLoader());
             toast(err?.message || 'Unable to connect to backend');
             if (err.message == 'Invalid token') {
                 navigate('/login', { replace: true });
             }
-
-            // console.log(err.message);
-            // dispatch(loaderActions.hideLoader());
-            // if (err.message == 'Failed to fetch') {
-            //     console.log('Unable to connect to backend');
-            //     toast('Unable to connect to backend');
-            // } else {
-            //     toast(err?.message || 'Something went wrong.');
-            // }
         } finally {
             setIsLoading(false);
         }

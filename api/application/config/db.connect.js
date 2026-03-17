@@ -1,7 +1,7 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 import { AsyncLocalStorage } from 'async_hooks';
-import { databaseCredentialsMap } from '../../databasesList.js';
+import { databaseCredentialsMap } from '../../databaseCredentialsMap.js';
 dotenv.config();
 
 const __poolsMap = new Map();

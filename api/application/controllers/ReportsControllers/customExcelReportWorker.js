@@ -8,7 +8,7 @@ import excel from 'exceljs';
     let workSheet = workbook.addWorksheet('Sheet_1');
 
     // prettier-ignore
-    const headerColumns = [ '#', 'Roll No', 'Post', 'First Name', 'Middle Name', 'Last Name', 'Date Of Birth', 'Category', 'Mobile', 'Attempted', 'Uttempted', 'Correct', 'Score']
+    const headerColumns = [ '#', 'Roll No', 'Post', 'First Name', 'Middle Name', 'Last Name', 'Date Of Birth', 'Category', 'Gender', 'Mobile', 'Attempted', 'Uttempted', 'Correct', 'Score']
 
     workSheet.addRow(headerColumns);
 
@@ -22,6 +22,7 @@ import excel from 'exceljs';
             el.sl_l_name,
             el.dob,
             el.sl_catagory,
+            el.sl_gender,
             el.sl_contact_number,
             parseInt(el.sfrs_correct) + parseInt(el.sfrs_wrong),
             el?.sfrs_unattempted || 0,

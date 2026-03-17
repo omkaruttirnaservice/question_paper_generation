@@ -1,7 +1,5 @@
 import express from 'express';
 import loginController from '../application/controllers/loginController.js';
-import { databasesList } from '../databasesList.js';
-import { isDevEnv } from '../application/config/utils.js';
 
 const router = express.Router();
 
