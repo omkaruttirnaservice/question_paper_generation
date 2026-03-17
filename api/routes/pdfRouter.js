@@ -7,7 +7,9 @@ import saveExamsController from '../application/controllers/saveExamsController/
 import dbProxy from '../application/config/db.connect.js';
 import archiver from 'archiver';
 
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+});
 
 const pdfRouter = Router();
 
