@@ -1,0 +1,124 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Candidate Response Sheet
+        style.
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .container { max-width: 900px; margin: auto; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .info-box { border:1px solid #ddd; padding:15px; border-radius:6px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:14px }
+            .question { 
+                border:1px solid #ddd;
+                padding:15px; 
+                margin-top:15px; 
+                border-radius:6px;
+            }
+            .options { 
+                padding-left:20px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .options  span {
+                display: inline-block;
+            }
+
+            .answers { 
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-top:10px; 
+                font-size:13px; 
+                border:1px solid #eee; 
+                padding:8px 
+            }
+
+    body
+        .container
+
+            h2.header Candidate Question Paper
+
+            if studExam
+                .info-box
+                    div
+                        strong Name:
+                        |  #{studExam.full_name || 'N/A'}
+
+                    div
+                        strong Exam Name:
+                        |  #{studExam.mt_name || 'N/A'}
+
+                    div
+                        strong Exam Date:
+                        |  #{studExam.sfrs_test_date || 'N/A'}
+
+                    div
+                        strong Candidate Roll No:
+                        |  #{studExam.sfrs_student_roll_no || 'N/A'}
+
+                    div
+                        strong Application ID:
+                        |  #{studExam.sl_application_number || 'N/A'}
+
+                    div
+                        strong Birth Date:
+                        |  #{studExam.sl_date_of_birth || 'N/A'}
+
+                    div
+                        strong Post Name:
+                        |  #{studExam.sl_post || 'N/A'}
+
+                    div
+                        strong Marks Obtained:
+                        |  #{studExam.sfrs_marks_gain || 'N/A'}
+
+                    div
+                        strong Total Marks:
+                        |  #{studExam.mt_total_marks || 'N/A'}
+
+            if quePaper.length === 0
+                p No question paper found
+                
+            else
+                each q, idx in quePaper
+                    .question
+                        p
+                            strong Q#{idx + 1}.
+                            span !{q.q}
+
+                        .options
+                            if q.q_a
+                                span(style=`${q.sqp_ans === 'a' ? 'font-weight:bold' : ''}`)
+                                    | A)&nbsp;
+                                    span !{q.q_a}
+
+                            if q.q_b
+                               span(style=`${q.sqp_ans === 'b' ? 'font-weight:bold' : ''}`)
+                                    | B)&nbsp;
+                                    span !{q.q_b}
+
+                            if q.q_c
+                                span(style=`${q.sqp_ans === 'c' ? 'font-weight:bold' : ''}`)
+                                    | C)&nbsp;
+                                    span !{q.q_c}
+
+                            if q.q_d
+                                span(style=`${q.sqp_ans === 'd' ? 'font-weight:bold' : ''}`)
+                                    | D)&nbsp;
+                                    span !{q.q_d}
+
+                            if q.q_e
+                                span(style=`${q.sqp_ans === 'e' ? 'font-weight:bold' : ''}`)
+                                    | E)&nbsp;
+                                    span !{q.q_e}
+
+                            .answers
+                                span
+                                    | Correct Answer:
+                                    strong  #{q.q_ans.toUpperCase() || '-'}
+
+                                span
+                                    | Your Answer:
+                                    strong  #{q.sqp_ans.toUpperCase() || '-'}

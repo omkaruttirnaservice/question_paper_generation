@@ -8,16 +8,24 @@ import cors from 'cors';
 import sequelize from './application/config/db-connect-migration.js';
 import { errorHandler } from './middlewares/errorMiddleware.js';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
+app.set('views', path.join(__dirname, 'application/views'));
+app.set('view engine', 'pug');
+
 // CORS setup with dynamic origin checking
 app.use(
     cors({
         origin: function (origin, callback) {
-            console.log(origin,'Origin');
+            console.log(origin, 'Origin');
             // allow non-browser tools like Postman
             if (!origin || origin === 'null') return callback(null, true);
 

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { reportsAction } from '../../../Store/reports-slice.jsx';
 import CButton from '../../UI/CButton.jsx';
 import {
+    getCandidateResponseSheet,
     getCustomResultExcel,
     getExamDates,
     getResultBatchesList,
@@ -14,7 +15,7 @@ import {
     singleCandiatePaper,
 } from './gen-reports-api.jsx';
 import { InputSelect } from '../../UI/Input.jsx';
-import { RESULT_BY_BATCH, RESULT_BY_POST } from '../../Utils/Constants.jsx';
+import { RESULT_BY_BATCH, RESULT_BY_POST, SERVER_IP } from '../../Utils/Constants.jsx';
 import { FiEye } from 'react-icons/fi';
 
 function ViewReports() {
@@ -250,6 +251,23 @@ function ViewReports() {
         _getResultExel.mutate(_data);
     };
 
+
+    const _getResponsePdf = useMutation({
+        mutationFn: () => {
+            return getCandidateResponseSheet();
+        },
+        onSuccess: (data) => { },
+        onError: (error) => {
+            console.log(error.message, '==error==');
+            toast.error(error?.message || 'Server error');
+        },
+    });
+
+    const handleGetResponsePdf = () => {
+
+        _getResponsePdf.mutate();
+    };
+
     return (
         <>
             <section className="grid grid-cols-6 mt-6 mb-2 gap-2">
@@ -315,6 +333,17 @@ function ViewReports() {
                             isLoading={_getResultExel.isPending}>
                             Excel
                         </CButton>
+
+                        {/* <CButton
+                            varient={'btn--warning'}
+                            onClick={handleGetResponsePdf}
+
+                        >
+                            Response Pdf
+                        </CButton> */}
+                        <a href={`${SERVER_IP}/api/pdf/v3/candidate-response-sheet`}>
+                            Download Pdf Stream
+                        </a>
 
                         <div className="flex items-center gap-2">
                             <label htmlFor="" for="percentile-result">

@@ -126,6 +126,13 @@ export const getCustomResultExcel = async (data) => {
     document.body.removeChild(a);
 };
 
+export const getCandidateResponseSheet = async () => {
+    let _res = await fetch(SERVER_IP + '/api/pdf/v3/candidate-response-sheet', {
+        credentials: 'include',
+    });
+};
+
+
 export const singleCandiatePaper = async ({ studentRollNumber, publishedTestId }) => {
     console.log(studentRollNumber, '==studentRollNumber==');
     console.log(publishedTestId, '==publishedTestId==');
