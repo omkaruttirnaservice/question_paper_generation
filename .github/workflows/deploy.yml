@@ -34,7 +34,7 @@ jobs:
                   host: ${{ secrets.HOST}}
                   username: ${{secrets.USER}}
                   key: ${{ secrets.PRIVATE_KEY}}
-                  source: './web/dist'
+                  source: 'web/dist/*'
                   target: '/var/www/data-entry/qp/web'
 
     restart-server:
