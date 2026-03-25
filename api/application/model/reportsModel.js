@@ -128,8 +128,25 @@ const reportsModel = {
         return await db.aouth.update({ exam_server_ip: ip }, { where: { id: 1 } });
     },
 
-    getPublishedTests: async () => {
-        return await db.tm_publish_test_list.findAll({ raw: true });
+    getPublishedTests: async (type) => {
+        let query = {};
+        if (type !== 'ALL') {
+            query = {
+                ptl_test_mode: type,
+            };
+        }
+        let allowedTypes = ['EXAM', 'MOCK'];
+        if (!allowedTypes.includes(type)) {
+            console.log(`Only types allowed are EXAM | MOCK`);
+            query = {};
+        }
+
+        return await db.tm_publish_test_list.findAll(
+            {
+                where: query,
+            },
+            { raw: true },
+        );
     },
 
     generateResult: async (publishedTestId, transact) => {

@@ -22,7 +22,8 @@ const reportsController = {
     }),
 
     getPublishedTests: asyncHandler(async (req, res) => {
-        let _tests = await reportsModel.getPublishedTests();
+        const { type = 'ALL' } = req.query;
+        let _tests = await reportsModel.getPublishedTests(type);
         return res.status(200).json(new ApiResponse(200, _tests));
     }),
 

@@ -180,7 +180,7 @@ function TestsList() {
 
     const validatePublishExam = () => {
         TestListSchemaYUP.validate(publishExamForm, { abortEarly: false })
-            .then(() => {})
+            .then(() => { })
             .catch((error) => {
                 let _err = {};
                 error.inner.forEach((err) => {
@@ -351,9 +351,8 @@ function TestsList() {
                                 setPublishExamForm((prev) => {
                                     return {
                                         ...prev,
-                                        publish_date: `${date.getDate()}-${
-                                            date.getMonth() + 1
-                                        }-${date.getFullYear()}`,
+                                        publish_date: `${date.getDate()}-${date.getMonth() + 1
+                                            }-${date.getFullYear()}`,
                                     };
                                 });
                             }}

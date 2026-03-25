@@ -10,15 +10,16 @@ import mock_exam_report from '../schemas/mock_exam_report.js';
 const testsController = {
     getList: async (req, res) => {
         try {
-            let _testsList = await testsModel.getList();
-            console.log(_testsList, 'testsList==========');
+            const { type } = req.query;
+
+            let _testsList = await testsModel.getList(type);
 
             return sendSuccess(res, _testsList);
         } catch (error) {
-            console.log(error, 'error=');
-            return sendError(res, error.message);
+            return sendError(res, error?.message);
         }
     },
+
     getTestDetailsById: async (req, res, next) => {
         try {
             const { testId, type } = req.params;
@@ -36,6 +37,7 @@ const testsController = {
             // ALL => all exams even though ptl_active_date >= CURDATE()
             // NEW => exams whose ptl_active_date >= CURDATE()
 
+            console.log(req.query, '=query');
             const { type, mode } = req.query;
 
             let [_testsListPublished] = await testsModel.getPublishedList(type, mode);
@@ -413,6 +415,7 @@ const testsController = {
                 post_id: '1',
                 post_name: 'DUMMY POST',
                 test_mode: 'MOCK',
+                mt_descp: 'MOCK',
             };
 
             // check if mock test exsists with same center_code, exam_date
@@ -427,6 +430,12 @@ const testsController = {
                 console.log('Info: finish removing old test data');
             }
 
+            // create a tm_test_user_master_list
+            // i.e. create a test first
+            const _testDetails = await testsModel.createMockTest(testData);
+
+            testData['ptl_test_id'] = _testDetails?.id;
+            // then
             // publish new mock test
             const _publishTestResp = await testsModel.publishMockTest(testData);
 
@@ -438,8 +447,8 @@ const testsController = {
             // generate dummy students for mock test and insert into `tn_student_list_mock` table
             const [_generateStudentResp] = await testsModel.generateMockStudents(testData);
 
-            // generate questions
-            const _generateQuestionResp = await testsModel.generateMockquestions(testData);
+            // generate mock questions
+            await testsModel.generateMockquestions(testData);
 
             return sendSuccess(res, null, 'Successfully created mock test');
         } catch (error) {
@@ -450,11 +459,9 @@ const testsController = {
     saveMockReport: async (req, res, next) => {
         try {
             const { studentsList } = req.body;
-            console.log(studentsList, '=studentsList11');
             await mock_exam_report.bulkCreate(studentsList);
             return sendSuccess(res, '', 'Sucessfully saved mock exam report');
         } catch (error) {
-            console.log(error, '==error');
             return sendError(res, error.message);
         }
     },

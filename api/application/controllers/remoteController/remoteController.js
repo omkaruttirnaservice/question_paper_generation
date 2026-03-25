@@ -27,6 +27,11 @@ const remoteController = {
     }),
 
     downloadExam: asyncHandler(async (req, res) => {
+        console.log(req.body);
+        /**
+         * sample
+         * req.body = { center_code: '101', published_test_id: '5', exam_mode: 'MOCK' }
+         */
         const { center_code, published_test_id, exam_mode } = req.body;
 
         if (!center_code) throw new ApiError(400, 'Center Code required');
@@ -43,6 +48,7 @@ const remoteController = {
         if (exam_info.length == 0) {
             return res.status(404).json({
                 call: 2,
+                message: 'Exam info not found',
             });
         }
 
@@ -56,17 +62,30 @@ const remoteController = {
             raw: true,
         });
 
-        // getting question paper
-        let question_paper = await db.tm_test_question_sets.findAll({
-            where: {
-                tqs_test_id: ptl_test_id,
-            },
-            raw: true,
-        });
+        let question_paper = [];
+
+        if (exam_mode === 'MOCK') {
+            // getting question paper for mock exam
+            question_paper = await db.tm_test_question_sets_mock.findAll({
+                where: {
+                    tqs_test_id: ptl_test_id,
+                },
+                raw: true,
+            });
+        } else {
+            // getting question paper for actual exam
+            question_paper = await db.tm_test_question_sets.findAll({
+                where: {
+                    tqs_test_id: ptl_test_id,
+                },
+                raw: true,
+            });
+        }
 
         if (question_paper.length == 0) {
             return res.status(404).json({
                 call: 3,
+                message: 'Question paper not found',
             });
         }
 
@@ -81,7 +100,10 @@ const remoteController = {
             studentsList = _mockStudents;
 
             if (studentsList.length === 0) {
-                throw new ApiError(404, 'No students found');
+                return res.status(404).json({
+                    call: 3,
+                    message: 'No students found',
+                });
             }
         }
 
@@ -92,10 +114,6 @@ const remoteController = {
             _postsList: _postsList,
             studentsList,
         });
-
-        // let _examsList = await remoteModel.getTodaysExamList(req.body);
-
-        // return res.status(200).json(new ApiResponse(200, _examsList));
     }),
 };
 export default remoteController;

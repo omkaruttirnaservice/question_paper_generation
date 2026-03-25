@@ -85,6 +85,7 @@ const tm_publish_test_list = sequelize.define(
         mt_descp: {
             type: DataTypes.TEXT,
             allowNull: false,
+            comment: 'This is EXAM | MOCK'
         },
         mt_is_live: {
             type: DataTypes.INTEGER,

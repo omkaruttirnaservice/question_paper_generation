@@ -54,6 +54,10 @@ export const getQuestionPaper = async (exam_panel_server_ip) => {
 };
 
 export const getPublishedTestList = async () => {
+    /**
+     * This is used in add students section
+     * when we want to uplaod ans key to form filling
+     */
     const url = SERVER_IP + '/api/test/list-published?type=EXAM&mode=ALL';
 
     return await axios.get(url);
@@ -92,6 +96,6 @@ export const getPostList = async (selectedIP) => {
 };
 
 export const getExamsList = async () => {
-    const url = SERVER_IP + '/api/test/list';
+    const url = SERVER_IP + '/api/test/list?type=EXAM';
     return await axios.get(url);
 };

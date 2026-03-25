@@ -12,4 +12,11 @@ export const databaseCredentialsMap = {
         DB_PASSWORD: '000@mainUser@#',
         DB_PORT: 3306,
     },
+
+    LOCAL: {
+        DB_HOST: 'localhost',
+        DB_USER: 'root',
+        DB_PASSWORD: '1234',
+        DB_PORT: 3306,
+    },
 };

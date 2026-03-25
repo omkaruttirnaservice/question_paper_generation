@@ -3,3 +3,4 @@ pics
 *.env
 dist
 .DS_Store
+api/pdf

@@ -12,11 +12,11 @@ import tm_student_question_paper from '../schemas/tm_student_question_paper.js';
 import tm_student_test_list from '../schemas/tm_student_test_list.js';
 import tm_sub_topic_list from '../schemas/tm_sub_topic_list.js';
 import tm_test_question_sets from '../schemas/tm_test_question_sets.js';
+import tm_test_question_sets_mock from '../schemas/tm_test_question_sets_mock.js';
 import tm_test_user_master_list from '../schemas/tm_test_user_master_list.js';
 import tn_center_list from '../schemas/tn_center_list.js';
 import tn_student_list from '../schemas/tn_student_list.js';
 import tn_student_list_mock from '../schemas/tn_student_list_mock.js';
-console.log(tn_student_list_mock,'tn_student_list_mock')
 
 const models = [
     aouth,
@@ -33,6 +33,7 @@ const models = [
     tm_student_test_list,
     tm_sub_topic_list,
     tm_test_question_sets,
+    tm_test_question_sets_mock,
     tm_test_user_master_list,
     tn_center_list,
     tn_student_list,

@@ -1,6 +1,6 @@
 let SERVER_IP = import.meta.env.VITE_API_SERVER_IP;
 export const getPublishedTestLists = async (ip) => {
-    let _res = await fetch(SERVER_IP + '/api/reports/get-published-tests', {
+    let _res = await fetch(SERVER_IP + '/api/reports/get-published-tests?type=EXAM', {
         credentials: 'include',
     });
     return _res.json();

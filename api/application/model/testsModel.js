@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize, where } from 'sequelize';
 // import sequelize from '../config/db-connect-migration.js';
 import db from '../config/db.connect.js';
 import mockDummyData from '../config/mockDummyData.js';
@@ -22,7 +22,16 @@ const testsModel = {
         }
     },
 
-    getList: async () => {
+    getList: async (type) => {
+        let query = {};
+        if (['MOCK', 'EXAM'].includes(type)) {
+            query = {
+                mt_descp: type,
+            };
+        } else {
+            query = {};
+        }
+
         return db.tm_test_user_master_list.findAll(
             {
                 // prettier-ignore
@@ -46,6 +55,7 @@ const testsModel = {
 					'mt_pattern_type',
 					'mt_total_test_question',
 				],
+                where: query,
             },
             { raw: true },
         );
@@ -108,7 +118,7 @@ const testsModel = {
 			
 			WHERE 
                 ${mode !== 'ALL' ? 'ptl_active_date >= CURDATE() AND' : ''}
-            ptl_test_mode = '${type}'
+                ptl_test_mode = '${type}'
 			GROUP BY tm_publish_test_list.id`,
             {
                 type: Sequelize.QueryTypes.SELECT,
@@ -141,7 +151,7 @@ const testsModel = {
                 {
                     mt_name: _t.test_name,
                     mt_added_date: myDate.getDate(),
-                    mt_descp: 'TEST',
+                    mt_descp: 'EXAM',
                     mt_added_time: myDate.getTime(),
                     mt_is_live: 1,
                     mt_time_stamp: myDate.getDateTime(),
@@ -294,7 +304,7 @@ const testsModel = {
         return await db.tm_test_user_master_list.create({
             mt_name: _t.test_name,
             mt_added_date: myDate.getDate(),
-            mt_descp: 'TEST',
+            mt_descp: 'EXAM',
             mt_added_time: myDate.getTime(),
             mt_is_live: 1,
             mt_time_stamp: myDate.getDateTime(),
@@ -694,6 +704,40 @@ const testsModel = {
         }
     },
 
+    createMockTest: async (_t) => {
+        let transact = await db.transaction();
+        try {
+            let _masterTest = await db.tm_test_user_master_list.create(
+                {
+                    mt_name: _t.mt_name,
+                    mt_added_date: myDate.getDate(),
+                    mt_descp: _t.mt_descp,
+                    mt_added_time: myDate.getTime(),
+                    mt_is_live: 1,
+                    mt_time_stamp: myDate.getDateTime(),
+                    mt_type: 1,
+                    tm_aouth_id: 1,
+                    mt_test_time: _t.test_duration,
+                    mt_total_test_takan: 0,
+                    mt_is_negative: 0,
+                    mt_negativ_mark: 0,
+                    mt_mark_per_question: _t.marks_per_question,
+                    mt_passing_out_of: 0,
+                    mt_total_marks: +_t.total_questions * +_t.marks_per_question,
+                    mt_pattern_type: 1,
+                    mt_total_test_question: +_t.total_questions,
+                },
+                { transaction: transact },
+            );
+
+            await transact.commit();
+            return _masterTest.toJSON();
+        } catch (error) {
+            await transact.rollback();
+            console.log('error occured in query createMockTest', error);
+        }
+    },
+
     publishMockTest: async (testData) => {
         let d = mockDummyData.testDetails(testData);
 
@@ -848,7 +892,7 @@ const testsModel = {
     generateMockquestions: async (testData) => {
         const questions = mockDummyData.getDummyQuestion(testData);
 
-        return await db.tm_test_question_sets.bulkCreate(questions);
+        return await db.tm_test_question_sets_mock.bulkCreate(questions);
     },
 
     getMockExamReport: async (testDetails) => {

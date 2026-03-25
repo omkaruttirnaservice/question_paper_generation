@@ -18,18 +18,21 @@
 - **Error**: `{ "success": 0, "message": "No published tests found" }`
 
 ## /create
+- **Description**: Create new test.
 - **Method**: `POST`
 - **Body**: `test`, `testQuestions`
 - **Return**: `{ "success": 1, "data": { "testDetails": { "id": 101 }, "message": "Successfully created test" }, "message": null }`
 - **Error**: `{ "success": 0, "message": "Invalid test data" }`
 
 ## /v1/create-auto
+- **Description**: Create new auto test.
 - **Method**: `POST`
 - **Body**: `test`, `topicList`
 - **Return**: `{ "success": 1, "data": "Successfully created auto test", "message": null }`
 - **Error**: `{ "success": 0, "message": "Insufficient questions for auto-generation" }`
 
 ## /v2/create-auto
+- **Description**: Create new auto test.
 - **Method**: `POST`
 - **Body**: `test`, `topicList`
 - **Return**: `{ "success": 1, "data": { "testDetails": { "id": 102 }, "message": "Successfully created auto test" }, "message": null }`
@@ -39,15 +42,17 @@
 - **Method**: `DELETE`
 - **Body**: `deleteId`
 - **Return**: `{ "success": 1, "data": { "affectedRows": 1 }, "message": null }`
-- **Error**: `{ "success": 0, "message": "Invalid delete id passed" }`
+- **Error**: `{ "statusCode": 404, "message": "Invalid delete id passed" }`
 
 ## /check-for-duplicate-test-key
+- **Description**: Check for duplicate test keys.
 - **Method**: `POST`
 - **Body**: `testKey`
-- **Return**: `{ "_message": "Test key already exists", "_success": 2 }` (Special format for this endpoint)
+- **Return**: `{ "_message": "Test key already exists", "_success": 2 }`
 - **Error**: `{ "success": 0, "message": "No test key passed" }`
 
 ## /publish
+- **Description**: Publish the exam.
 - **Method**: `POST`
 - **Body**: Test publication configuration
 - **Return**: `{ "success": 1, "data": { "testDetails": { "id": 201 }, "message": "Successfully published test" }, "message": null }`
@@ -60,12 +65,14 @@
 - **Error**: `{ "success": 0, "message": "Invalid test id" }`
 
 ## /questions
+- **Description**: Getting test questions list.
 - **Method**: `POST`
 - **Body**: `testId`
 - **Return**: `{ "success": 1, "data": [{ "q_id": 1, "q": "What is 2+2?" }], "message": null }`
 - **Error**: `{ "success": 0, "message": "Failed to fetch questions" }`
 
 ## /update-test-question
+- **Description**: Update test question.
 - **Method**: `PUT`
 - **Query**: `isMasterUpdate`
 - **Body**: Updated question details
@@ -73,12 +80,14 @@
 - **Error**: `{ "success": 0, "message": "Update failed" }`
 
 ## /create-mock
+- **Description**: Mock exam.
 - **Method**: `POST`
 - **Body**: Mock test configuration
 - **Return**: `{ "success": 1, "data": null, "message": "Successfully created mock test" }`
 - **Error**: `{ "success": 0, "message": "Validation error" }`
 
 ## /upload-mock-report
+- **Description**: Save mock report. This report will be pushed from exam panel.
 - **Method**: `POST`
 - **Body**: `studentsList`
 - **Return**: `{ "success": 1, "data": "", "message": "Sucessfully saved mock exam report" }`

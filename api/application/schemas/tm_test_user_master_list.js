@@ -10,7 +10,7 @@ const tm_test_user_master_list = sequelize.define('tm_test_user_master_list', {
     },
     mt_name: { type: Sequelize.TEXT('medium'), allowNull: false },
     mt_added_date: { type: Sequelize.DATEONLY },
-    mt_descp: { type: Sequelize.TEXT('medium') },
+    mt_descp: { type: Sequelize.TEXT('medium'), comment: 'This is EXAM | MOCK' },
     mt_added_time: { type: Sequelize.TIME },
     mt_is_live: { type: Sequelize.TINYINT },
     mt_time_stamp: { type: Sequelize.DATE },
