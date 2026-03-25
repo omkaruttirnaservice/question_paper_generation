@@ -64,4 +64,4 @@ await createDatabaseIfNotExists();
 const SCHEMAS_PATH = path.join(process.cwd(), 'application', 'schemas');
 let models = await new RequireModels().require(SCHEMAS_PATH);
 
-// getSync();
+getSync();
