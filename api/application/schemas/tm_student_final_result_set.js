@@ -24,7 +24,7 @@ const tm_student_final_result_set = sequelize.define('tm_student_final_result_se
     sfrc_total_marks: { type: Sequelize.STRING(50) },
 
     sfrs_test_date: { type: Sequelize.DATEONLY },
-    sfrs_test_info: { type: Sequelize.STRING(20), defaultValue: 'Test' },
+    sfrs_test_info: { type: Sequelize.STRING(20), defaultValue: '' },
     sfrs_rem_min: { type: Sequelize.STRING(20) },
     sfrs_rem_sec: { type: Sequelize.STRING(20) },
 

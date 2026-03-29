@@ -149,7 +149,7 @@ const testsController = {
                 {
                     mt_name: _t.test_name,
                     mt_added_date: myDate.getDate(),
-                    mt_descp: 'TEST',
+                    mt_descp: 'EXAM',
                     mt_added_time: myDate.getTime(),
                     mt_is_live: 1,
                     mt_time_stamp: myDate.getDateTime(),
@@ -288,7 +288,7 @@ const testsController = {
                         id: 1,
                         mt_name: 'Exam One',
                         mt_added_date: '13-06-2025',
-                        mt_descp: 'TEST',
+                        mt_descp: 'EXAM',
                         mt_added_time: '13:04:21',
                         mt_is_live: 1,
                         mt_time_stamp: '2025-06-13T07:34:21.000Z',
