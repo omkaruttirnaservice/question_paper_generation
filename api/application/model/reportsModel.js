@@ -168,7 +168,7 @@ const reportsModel = {
                  main_result.sfrs_cutoff as   sfrs_cutoff,
                  main_result.sfrc_total_marks as sfrc_total_marks,
                  main_result.sfrs_test_date as sfrs_test_date,
-                 IFNULL('Test','Test') as sfrs_test_info,
+                 IFNULL('EXAM','EXAM') as sfrs_test_info,
                  main_result.sfrs_rem_min as sfrs_rem_min,
                  main_result.sfrs_rem_sec as sfrs_rem_sec
                 FROM 

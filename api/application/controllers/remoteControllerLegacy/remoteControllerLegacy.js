@@ -213,17 +213,35 @@ const remoteControllerLegacy = {
                 raw: true,
             });
 
+            let question_paper = [];
             // getting question paper
-            let question_paper = await db.tm_test_question_sets.findAll({
-                where: {
-                    tqs_test_id: ptl_test_id,
-                },
-                raw: true,
-            });
+            if (_examInfo.ptl_test_mode === 0) {
+                // We are getting mock question only
+                // because ptl_test_mode = 0
+                console.log(`Getting mock question paper`);
+
+                question_paper = await db.tm_test_question_sets_mock.findAll({
+                    where: {
+                        tqs_test_id: ptl_test_id,
+                    },
+                    raw: true,
+                });
+            } else {
+                // We are getting exam question only
+                // because ptl_test_mode = 1
+                console.log(`Getting exam question paper`);
+                question_paper = await db.tm_test_question_sets.findAll({
+                    where: {
+                        tqs_test_id: ptl_test_id,
+                    },
+                    raw: true,
+                });
+            }
 
             if (question_paper.length == 0) {
                 return res.status(404).json({
                     call: 3,
+                    message: 'Question paper not found',
                 });
             }
 
