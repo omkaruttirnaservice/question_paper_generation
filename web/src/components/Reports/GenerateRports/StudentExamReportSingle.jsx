@@ -20,7 +20,6 @@ function StudentExamReportSingle() {
     );
     const { studExam, quePaper } = singleStudentViewReport;
 
-    console.log(studExam);
 
     useLayoutEffect(() => {
         setParams({ tab: SCORE_TAB });
@@ -64,18 +63,16 @@ function StudentExamReportSingle() {
                     </CButton>
                     <CButton
                         onClick={handleChangeTab.bind(null, QUESTION_PAPER_TAB)}
-                        className={`${
-                            params.get('tab') == QUESTION_PAPER_TAB ? 'btn--success px-9' : ''
-                        }`}>
+                        className={`${params.get('tab') == QUESTION_PAPER_TAB ? 'btn--success px-9' : ''
+                            }`}>
                         Question Paper
                     </CButton>
 
                     <CButton className={`btn--warning px-2 text-gray-700`}>
                         <NavLink
                             target="_blank"
-                            to={`/qp-pdf/${studExam?.sfrs_student_id || 0}/${
-                                studExam?.sfrs_publish_id || 0
-                            }`}
+                            to={`/qp-pdf/${studExam?.sfrs_student_id || 0}/${studExam?.sfrs_publish_id || 0
+                                }`}
                             className={`btn--warning px-9 text-gray-700`}>
                             Get Pdf
                         </NavLink>

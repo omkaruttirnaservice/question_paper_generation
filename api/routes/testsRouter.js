@@ -10,6 +10,8 @@ testsRouter.get('/list-published', testsController.getPublishedList);
 
 testsRouter.get('/dates-published', testsController.getPublishedExamsDateOnly);
 
+testsRouter.post('/apply-objection', testsController.applyObjection);
+
 //  create new test
 testsRouter.post('/create', testsController.createTest);
 

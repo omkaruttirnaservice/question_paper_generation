@@ -40,6 +40,7 @@ let initialState = {
     edit_test_type: null,
     isUpdateToMaster: false,
     isUpdateToMasterPersist: false,
+    isObjectionUpdate: false
 };
 const EditQuestionFormSlice = createSlice({
     name: 'question-form-slice',
@@ -55,9 +56,12 @@ const EditQuestionFormSlice = createSlice({
         },
 
         setUpdateToMaster(state, action) {
-            console.log(action, '-action');
             state.isUpdateToMaster = action.payload.isUpdateToMaster;
             state.isUpdateToMasterPersist = action.payload.isUpdateToMasterPersist;
+        },
+
+        setObjectionUpdate(state, action) {
+            state.isObjectionUpdate = action.payload
         },
 
         handleInputChange(state, action) {

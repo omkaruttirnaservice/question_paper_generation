@@ -113,6 +113,8 @@ const testsSlice = createSlice({
             if (payload.mode == TEST_LIST_MODE.PUBLISHED_TEST_LIST) {
                 state.testDetails.mode = TEST_LIST_MODE.PUBLISHED_TEST_LIST;
                 state.testDetails.test_id = payload.ptl_test_id;
+                state.testDetails.pub_test_id = payload.id;
+
             }
             state.testDetails.test_name = payload.mt_name;
             state.testDetails.test_duration = payload.mt_test_time;
@@ -179,6 +181,7 @@ export const getQuestionsListThunk = (testId, sendRequest, navigate) => {
             method: 'POST',
             body: JSON.stringify({ testId }),
         };
+        console.log(reqData, '=here');
         sendRequest(reqData, ({ success, data }) => {
             if (data.length == 0) {
                 Swal.fire({

@@ -1,4 +1,4 @@
-import { Op, Sequelize, where } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 // import sequelize from '../config/db-connect-migration.js';
 import db from '../config/db.connect.js';
 import mockDummyData from '../config/mockDummyData.js';
@@ -9,9 +9,8 @@ import { myDate } from '../config/utils.js';
 // import tm_test_question_sets from '../schemas/tm_test_question_sets.js';
 // import tm_test_user_master_list from '../schemas/tm_test_user_master_list.js';
 // import tn_student_list from '../schemas/tn_student_list.js';
-import { toYYYYMMDD } from '../utils/help.js';
 import { TEST_LIST_MODE } from '../config/constants.js';
-import tm_publish_test_list from '../schemas/tm_publish_test_list.js';
+import { toYYYYMMDD } from '../utils/help.js';
 
 const testsModel = {
     getTestById: async (id, type) => {
@@ -25,9 +24,15 @@ const testsModel = {
 
     getList: async (type) => {
         let query = {};
-        if (['MOCK', 'EXAM'].includes(type)) {
+        if (type === 'MOCK') {
             query = {
                 mt_descp: type,
+            };
+        } else if (type === 'EXAM' || type === 'Test') {
+            query = {
+                mt_descp: {
+                    [Op.or]: ['EXAM', 'Test'],
+                },
             };
         } else {
             query = {};
@@ -130,7 +135,7 @@ const testsModel = {
 			
 			WHERE 
                 ${where}
-                ptl_test_mode = '${type}'
+                ${type === 'EXAM' ? "ptl_test_mode = 'EXAM' OR ptl_test_mode = 'Test'" : "ptl_test_mode='MOCK'"}
 			GROUP BY tm_publish_test_list.id`,
             {
                 type: Sequelize.QueryTypes.SELECT,
@@ -659,6 +664,7 @@ const testsModel = {
                     'mqs_ask_in_year',
                 ],
                 'mqs_leval',
+                'is_objection_question',
             ],
             order: [['sub_topic_id', 'ASC']],
         });
@@ -666,6 +672,7 @@ const testsModel = {
 
     // update test question
     updateTestQuestion: async (data) => {
+        console.log(data, 'dat=================');
         let trans = await db.transaction();
         try {
             let _updateRes = db.tm_test_question_sets.update(
@@ -684,6 +691,7 @@ const testsModel = {
                     mqs_ask_in_month: data.month,
                     mqs_ask_in_year: data.year,
                     mqs_leval: data.difficulty,
+                    is_objection_question: data.isObjectionUpdate === 'true' ? 1 : 0,
                 },
                 {
                     where: {

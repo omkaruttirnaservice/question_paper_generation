@@ -6,6 +6,8 @@ import tm_test_user_master_list from '../schemas/tm_test_user_master_list.js';
 import testsModel from '../model/testsModel.js';
 import { sendError, sendSuccess } from '../utils/commonFunctions.js';
 import mock_exam_report from '../schemas/mock_exam_report.js';
+import tm_student_question_paper from '../schemas/tm_student_question_paper.js';
+import db from '../config/db.connect.js';
 
 const testsController = {
     getList: async (req, res) => {
@@ -57,6 +59,53 @@ const testsController = {
             console.log(pubExamDates, 'examdatea');
 
             return sendSuccess(res, pubExamDates);
+        } catch (error) {
+            return sendError(res, error.message);
+        }
+    },
+
+    applyObjection: async (req, res, next) => {
+        try {
+            /**
+             * we override the answer given by student for that question
+             * with correct option after question is updated
+             * then we regenerate the result
+             */
+            const { tqs_question_id, pub_test_id, correct_answer } = req.body;
+
+            // 1.
+            // get students who are applicable for objection
+            // i.e. students who are having the published test id of that objection question
+            const studentsToUpdate = await db.tm_student_question_paper.findAll({
+                where: {
+                    sqp_question_id: tqs_question_id,
+                    sqp_publish_id: pub_test_id,
+                },
+                raw: true,
+            });
+            console.log(`Updating: ${studentsToUpdate.length} students answers`);
+
+            // 2.
+            // update the students answer to correct option
+            // in tm_student_question_paper table
+            await db.tm_student_question_paper.update(
+                {
+                    sqp_ans: correct_answer?.toLowerCase(),
+                    is_objection_question: 1, // setting 1 means the question is udpated as a objection question
+                },
+                {
+                    where: {
+                        sqp_question_id: tqs_question_id,
+                        sqp_publish_id: pub_test_id,
+                    },
+                },
+            );
+
+            return sendSuccess(
+                res,
+                '',
+                `Updated: ${studentsToUpdate.length} students response to: ${correct_answer}`,
+            );
         } catch (error) {
             return sendError(res, error.message);
         }
@@ -360,10 +409,8 @@ const testsController = {
     // getting test questions list
     getTestQuestionsList: async (req, res) => {
         try {
-            console.log('11');
             const { testId } = req.body;
             let _testsList = await testsModel.getTestQuestionsList(testId);
-            console.log(_testsList, '=_testsList');
 
             return sendSuccess(res, _testsList);
         } catch (error) {
@@ -375,14 +422,19 @@ const testsController = {
     // update test question
     updateTestQuestion: async (req, res) => {
         try {
-            console.log(req.body, 'body');
+            const { isMasterUpdate, isObjectionUpdate } = req.query;
+
+            const updateData = req.body;
+
+            updateData.isObjectionUpdate = isObjectionUpdate;
+
             // update to tm_test_question_set
-            let [_updateRes] = await testsModel.updateTestQuestion(req.body);
+            let [_updateRes] = await testsModel.updateTestQuestion(updateData);
 
             // update to mega_question_set
 
-            if (req.query?.isMasterUpdate == 'true') {
-                let [__updateRes] = await testsModel.updateMegaTestQuestion(req.body);
+            if (isMasterUpdate == 'true') {
+                let [__updateRes] = await testsModel.updateMegaTestQuestion(updateData);
             }
 
             return sendSuccess(res, 'Successfully updated question');

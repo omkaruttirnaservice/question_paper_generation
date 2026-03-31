@@ -117,9 +117,8 @@ const PDFGenerator = () => {
                             <div className="pl-4 space-y-1">
                                 {q.q_a && (
                                     <p
-                                        className={`${
-                                            q.sqp_ans === 'a' ? 'font-medium text-gray-900' : ''
-                                        }`}>
+                                        className={`${q.sqp_ans === 'a' ? 'font-medium text-gray-900' : ''
+                                            }`}>
                                         <span>A.</span>
                                         <span
                                             className="inline-block"
@@ -129,9 +128,8 @@ const PDFGenerator = () => {
                                 )}
                                 {q.q_b && (
                                     <p
-                                        className={`${
-                                            q.sqp_ans === 'b' ? 'font-medium text-gray-900' : ''
-                                        }`}>
+                                        className={`${q.sqp_ans === 'b' ? 'font-medium text-gray-900' : ''
+                                            }`}>
                                         B.{' '}
                                         <span
                                             className="inline-block"
@@ -141,9 +139,8 @@ const PDFGenerator = () => {
                                 )}
                                 {q.q_c && (
                                     <p
-                                        className={`${
-                                            q.sqp_ans === 'c' ? 'font-medium text-gray-900' : ''
-                                        }`}>
+                                        className={`${q.sqp_ans === 'c' ? 'font-medium text-gray-900' : ''
+                                            }`}>
                                         C.{' '}
                                         <span
                                             className="inline-block"
@@ -153,9 +150,8 @@ const PDFGenerator = () => {
                                 )}
                                 {q.q_d && (
                                     <p
-                                        className={`${
-                                            q.sqp_ans === 'd' ? 'font-medium text-gray-900' : ''
-                                        }`}>
+                                        className={`${q.sqp_ans === 'd' ? 'font-medium text-gray-900' : ''
+                                            }`}>
                                         D.{' '}
                                         <span
                                             className="inline-block"
@@ -165,9 +161,8 @@ const PDFGenerator = () => {
                                 )}
                                 {q.q_e && (
                                     <p
-                                        className={`${
-                                            q.sqp_ans === 'e' ? 'font-medium text-gray-900' : ''
-                                        }`}>
+                                        className={`${q.sqp_ans === 'e' ? 'font-medium text-gray-900' : ''
+                                            }`}>
                                         E.{' '}
                                         <span
                                             className="inline-block"
@@ -177,6 +172,8 @@ const PDFGenerator = () => {
                                 )}
                             </div>
                             <div className="mt-2 text-sm text-gray-800 border justify-center flex items-center gap-6">
+
+                                {q.is_objection_question === 1 && <p>Updated for objection</p>}
                                 <p>
                                     Correct Answer: <strong>{q?.q_ans?.toUpperCase() || '-'}</strong>
                                 </p>

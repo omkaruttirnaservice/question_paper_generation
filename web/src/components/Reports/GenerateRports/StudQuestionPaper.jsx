@@ -4,6 +4,7 @@ import { FiCheck, FiX } from 'react-icons/fi';
 
 function StudQuestionPaper({ el, idx }) {
 	const isAnsCorrect = el?.q_ans?.toUpperCase() === el?.sqp_ans?.toUpperCase();
+	const isObjectionQuestion = el?.is_objection_question === 1
 	const optionKeys = ['a', 'b', 'c', 'd', 'e'];
 
 	const renderOptionCard = (opt) => {
@@ -16,13 +17,12 @@ function StudQuestionPaper({ el, idx }) {
 		return (
 			<div
 				key={opt}
-				className={`rounded-lg border p-3 transition-all text-sm relative group ${
-					isCorrectAnswer
-						? 'border-green-500 bg-green-50'
-						: isStudentAnswer
+				className={`rounded-lg border p-3 transition-all text-sm relative group ${isCorrectAnswer
+					? 'border-green-500 bg-green-100'
+					: isStudentAnswer
 						? 'border-blue-500 bg-blue-50'
 						: 'border-gray-200 bg-white'
-				}`}
+					}`}
 			>
 				<div className="font-semibold text-gray-600 mb-1 uppercase">Option {opt}</div>
 				<div dangerouslySetInnerHTML={{ __html: optionText }} className="text-gray-800" />
@@ -44,23 +44,35 @@ function StudQuestionPaper({ el, idx }) {
 
 	return (
 		<div
-			className={`relative mb-6 w-full rounded-xl border-l-4 shadow-md transition-all p-6 space-y-5 ${
-				isAnsCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
-			}`}
+			className={`relative mb-6 w-full rounded-xl border-l-4 shadow-md transition-all p-6 space-y-5 ${isAnsCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
+				}`}
 		>
 			{/* Top status bar */}
 			<div className="flex justify-between items-center mb-3">
 				<h4 className="text-lg font-semibold text-gray-800">
 					Q.{idx + 1}
 				</h4>
-				<span
-					className={`flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full text-white shadow ${
-						isAnsCorrect ? 'bg-green-500' : 'bg-red-500'
-					}`}
-				>
-					{isAnsCorrect ? <FaRegThumbsUp size={16} /> : <FaRegThumbsDown size={16} />}
-					{isAnsCorrect ? 'Correct' : 'Wrong'}
-				</span>
+				<div className="flex gap-2">
+
+					{isObjectionQuestion &&
+						<span
+							className={`flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full text-white shadow bg-blue-500
+								}`}
+						>
+
+							Updated for objection
+						</span>
+					}
+
+					<span
+						className={`flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full text-white shadow ${isAnsCorrect ? 'bg-green-500' : 'bg-red-500'
+							}`}
+					>
+						{isAnsCorrect ? <FaRegThumbsUp size={16} /> : <FaRegThumbsDown size={16} />}
+						{isAnsCorrect ? 'Correct' : 'Wrong'}
+					</span>
+
+				</div>
 			</div>
 
 			{/* Question */}

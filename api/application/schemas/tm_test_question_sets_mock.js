@@ -49,6 +49,11 @@ export const test_question_sets_columns = {
     mqs_ask_in_month: { type: Sequelize.STRING(20) },
     mqs_ask_in_year: { type: JSON, defaultValue: [] },
     mqs_leval: { type: Sequelize.STRING(255) },
+    is_objection_question: {
+        type: Sequelize.TINYINT,
+        defaultValue: 0,
+        comment: 'Tells that if the question is issued under objection',
+    },
 };
 
 const tm_test_question_sets_mock = sequelize.define(

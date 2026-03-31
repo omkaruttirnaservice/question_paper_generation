@@ -40,6 +40,7 @@ const EditAddQuestionForm = () => {
         data: _formData,
         isUpdateToMaster,
         isUpdateToMasterPersist,
+        isObjectionUpdate
     } = useSelector((state) => state.questionForm);
     const { testDetails } = useSelector((state) => state.tests);
 
@@ -63,6 +64,7 @@ const EditAddQuestionForm = () => {
 
     const handleUpdateQuestion = async (e) => {
         e.preventDefault();
+
         try {
             await editQuestionFormSchemaYUP.validate(_formData, {
                 abortEarly: false,
@@ -75,6 +77,7 @@ const EditAddQuestionForm = () => {
             }
             dispatch(EditQuestionFormActions.setErrors({}));
         } catch (error) {
+            console.log(error, 'error');
             const errorsObj = {};
             error.inner.forEach((el) => {
                 errorsObj[el.path] = el.message;
@@ -84,12 +87,16 @@ const EditAddQuestionForm = () => {
     };
 
     async function postQuestionData() {
-   
 
+
+        // Setting is objection update status
+        let updateQuestionData = {
+            ..._formData,
+        }
         let reqData = {
-            url: `${SERVER_IP}/api/test/update-test-question?isMasterUpdate=${isUpdateToMaster}`,
+            url: `${SERVER_IP}/api/test/update-test-question?isMasterUpdate=${isUpdateToMaster}&isObjectionUpdate=${isObjectionUpdate}`,
             method: 'PUT',
-            body: JSON.stringify(_formData),
+            body: JSON.stringify(updateQuestionData),
         };
         sendRequest(reqData, (data) => {
             if (data.success == 1) {
@@ -158,6 +165,24 @@ const EditAddQuestionForm = () => {
 
                     <div className="sticky bottom-5 right-0">
                         <div className="flex justify-end gap-4">
+
+                            <div className="flex items-center gap-3 ">
+                                <label htmlFor="objection-update" className="cursor-pointer">
+                                    Update for objection
+                                </label>
+                                <input
+                                    type="checkbox"
+                                    id="objection-update"
+                                    className="cursor-pointer"
+                                    checked={isObjectionUpdate}
+                                    onClick={(e) => {
+                                        dispatch(
+                                            EditQuestionFormActions.setObjectionUpdate(!isObjectionUpdate)
+                                        );
+                                    }}
+                                />
+                            </div>
+
                             <div className="flex items-center gap-3 ">
                                 <label htmlFor="master-update" className="cursor-pointer">
                                     Update to master

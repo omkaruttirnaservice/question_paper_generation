@@ -4,9 +4,10 @@ import {
     FaArrowAltCircleRight,
     FaBackspace,
     FaEye,
+    FaPlus,
     FaPrint,
 } from 'react-icons/fa';
-import { FaListUl, FaSpinner } from 'react-icons/fa6';
+import { FaListUl, FaSpinner, FaUpRightAndDownLeftFromCenter } from 'react-icons/fa6';
 import { GoPencil } from 'react-icons/go';
 import { IoGridOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,10 +24,14 @@ import {
     _questionListView,
     EDIT_QUESTION_OF_GENERATED_TEST,
     EDIT_QUESTION_OF_PUBLISHED_TEST,
+    SERVER_IP,
     TEST_LIST_MODE,
 } from '../Utils/Constants.jsx';
 import EditQuestionView from './EditQuestionView.jsx';
 import { renderTopicHeader } from './utils.js';
+import { InputSelect } from '../UI/Input.jsx';
+import Swal from 'sweetalert2';
+import { sweetAlertConfirm } from '../Utils/utils.jsx';
 
 function TestQuestionsView() {
     const [questionListView, setQuestionListView] = useState(_questionListView.SPLIT);
@@ -35,9 +40,12 @@ function TestQuestionsView() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+
     useEffect(() => {
         dispatch(getQuestionsListThunk(testDetails.test_id, sendRequest, navigate));
     }, [testDetails.test_id]);
+
+    console.log(testDetails.pub_test_id);
 
     const handleEditQuestion = (el) => {
         if (testDetails.mode == TEST_LIST_MODE.TEST_LIST) {
@@ -59,11 +67,48 @@ function TestQuestionsView() {
         dispatch(ModalActions.toggleModal('edit-que-modal'));
     };
 
+    const handleUpdateObjection = async (el) => {
+        if (!await sweetAlertConfirm('Are you sure?', 'Do you want to apply objection for this question!')) return
+
+
+        let reqData = {
+            url: SERVER_IP + '/api/test/apply-objection',
+            method: 'POST',
+            body: JSON.stringify({
+                tqs_question_id: el.q_id,
+                pub_test_id: testDetails.pub_test_id,
+                correct_answer: el.q_ans
+            }),
+        };
+        sendRequest(reqData, ({ success, data }) => { });
+
+    };
+
+    const [listMode, setListMode] = useState("ALL")
+    const [filteredQuestionList, setFilteredQuestionList] = useState(questionsList ?? [])
+
+    useEffect(() => {
+        setFilteredQuestionList(questionsList)
+    }, [questionsList])
+
+    useEffect(() => {
+        // we will filter out the questions as per list mode
+        // ALL => show all questions
+        // OBJECTION => filter out questions who has been marked as objection
+        if (listMode === 'OBJECTION') {
+            let filteredList = questionsList.filter(question => question.is_objection_question === 1)
+            console.log(filteredList);
+            setFilteredQuestionList(filteredList)
+        } else {
+            setFilteredQuestionList(questionsList)
+        }
+    }, [listMode, questionsList])
+
     return (
         <>
             <EditQuestionView />
             <CModal id={'view-pdf-modal'} title={'Questions Print List'} className={`min-w-[95vw]`}>
-                <PDFGenerator questions={questionsList} testDetails={testDetails} />
+                <PDFGenerator questions={filteredQuestionList} testDetails={testDetails} />
             </CModal>
 
             <CButton
@@ -80,24 +125,45 @@ function TestQuestionsView() {
                 setQuestionListView={setQuestionListView}
             />
 
-            {questionsList.length === 0 && (
+
+            <div className="w-48 mb-6">
+                <span title='This shows the question list mode, ALL Questions, Objection Questions' className='bg-red-200 rounded-full px-2 cursor-pointer'>i</span>
+                <InputSelect
+                    label={"Question List mode"}
+                    name="list_mode"
+                    value={listMode}
+                    onChange={(e) => {
+                        setListMode(e.target.value)
+                    }}
+                >
+                    <option value="ALL" >All Questions</option>
+                    <option value="OBJECTION">Objection Question</option>
+                </InputSelect>
+            </div>
+
+
+
+            {filteredQuestionList.length === 0 && (
                 <div className="flex justify-center py-20">
-                    <FaSpinner className="animate-spin text-3xl text-blue-500" />
+                    No questions found.
                 </div>
             )}
 
-            {questionListView === _questionListView.SPLIT && questionsList.length !== 0 && (
+
+            {questionListView === _questionListView.SPLIT && filteredQuestionList.length !== 0 && (
                 <QuestionSplitView
-                    questionsList={questionsList}
+                    questionsList={filteredQuestionList}
                     renderTopicHeader={renderTopicHeader}
                     handleEditQuestion={handleEditQuestion}
+                    handleUpdateObjection={handleUpdateObjection}
+                    listMode={listMode}
                 />
             )}
 
-            {questionListView === _questionListView.EXAM_THEME_1 && questionsList.length !== 0 && (
+            {questionListView === _questionListView.EXAM_THEME_1 && filteredQuestionList.length !== 0 && (
                 <ExamThemeView
                     testDetails={testDetails}
-                    questionsList={questionsList}
+                    questionsList={filteredQuestionList}
                     renderTopicHeader={renderTopicHeader}
                     handleEditQuestion={handleEditQuestion}
                 />
@@ -127,20 +193,18 @@ function TestInfoHeader({ testDetails, questionListView, setQuestionListView }) 
             <div className="flex justify-center gap-3 mb-6">
                 <div
                     onClick={toggleListMode.bind(null, _questionListView.SPLIT)}
-                    className={`p-3 rounded-md border shadow-sm cursor-pointer ${
-                        questionListView == _questionListView.SPLIT
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white hover:bg-gray-100'
-                    }`}>
+                    className={`p-3 rounded-md border shadow-sm cursor-pointer ${questionListView == _questionListView.SPLIT
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white hover:bg-gray-100'
+                        }`}>
                     <FaListUl />
                 </div>
                 <div
                     onClick={toggleListMode.bind(null, _questionListView.EXAM_THEME_1)}
-                    className={`p-3 rounded-md border shadow-sm cursor-pointer ${
-                        questionListView == _questionListView.EXAM_THEME_1
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white hover:bg-gray-100'
-                    }`}>
+                    className={`p-3 rounded-md border shadow-sm cursor-pointer ${questionListView == _questionListView.EXAM_THEME_1
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white hover:bg-gray-100'
+                        }`}>
                     <IoGridOutline />
                 </div>
             </div>
@@ -171,7 +235,7 @@ function TestInfoHeader({ testDetails, questionListView, setQuestionListView }) 
     );
 }
 
-const QuestionSplitView = memo(({ questionsList, renderTopicHeader, handleEditQuestion }) => {
+const QuestionSplitView = memo(({ questionsList, renderTopicHeader, handleEditQuestion, handleUpdateObjection, listMode }) => {
     return (
         <div className="container mx-auto columns-1 md:columns-2 gap-6">
             {questionsList.map((el, idx) => {
@@ -180,15 +244,35 @@ const QuestionSplitView = memo(({ questionsList, renderTopicHeader, handleEditQu
                     <div
                         className="border rounded-lg transition-all duration-300 mb-6 shadow-md bg-white hover:shadow-lg relative"
                         key={idx}>
+
                         {topicHeader}
-                        <CButton
-                            icon={<GoPencil />}
-                            onClick={handleEditQuestion.bind(null, el)}
-                            className={
-                                'absolute top-2 right-2 bg-yellow-400 hover:bg-yellow-500 text-sm px-3 py-1 rounded'
-                            }>
-                            Edit
-                        </CButton>
+                        <div className='absolute top-2 right-2 flex gap-2  '
+                        >
+
+                            <CButton
+                                icon={<GoPencil />}
+                                onClick={handleEditQuestion.bind(null, el)}
+                                className={
+                                    'text-sm px-3 py-1 rounded'
+                                }>
+                                Edit
+                            </CButton>
+
+
+                            {el?.is_objection_question === 1 && listMode === 'OBJECTION' &&
+                                <CButton
+                                    varient='btn--danger'
+                                    icon={<FaPlus />}
+                                    onClick={handleUpdateObjection.bind(null, el)}
+                                    className={
+                                        'text-sm px-3 py-1 rounded text-white'
+                                    }>
+                                    Update Objection
+                                </CButton>
+                            }
+
+                        </div>
+
                         <QuestionUi q={el} idx={idx} />
                     </div>
                 );
@@ -266,11 +350,10 @@ export function ExamThemeView({ testDetails, questionsList, handleEditQuestion, 
                                 {questionsList.map((_q, _i) => (
                                     <div
                                         key={_i}
-                                        className={`border rounded-md size-10 flex items-center justify-center cursor-pointer transition ${
-                                            idx === _i
-                                                ? 'bg-blue-500 text-white shadow-md'
-                                                : 'bg-white hover:bg-gray-100'
-                                        }`}
+                                        className={`border rounded-md size-10 flex items-center justify-center cursor-pointer transition ${idx === _i
+                                            ? 'bg-blue-500 text-white shadow-md'
+                                            : 'bg-white hover:bg-gray-100'
+                                            }`}
                                         onClick={() => setIdx(_i)}>
                                         {_i + 1}
                                     </div>
