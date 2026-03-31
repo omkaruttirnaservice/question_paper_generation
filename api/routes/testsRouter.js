@@ -8,6 +8,8 @@ testsRouter.get('/details/:testId/:type', testsController.getTestDetailsById);
 testsRouter.get('/list', testsController.getList);
 testsRouter.get('/list-published', testsController.getPublishedList);
 
+testsRouter.get('/dates-published', testsController.getPublishedExamsDateOnly);
+
 //  create new test
 testsRouter.post('/create', testsController.createTest);
 

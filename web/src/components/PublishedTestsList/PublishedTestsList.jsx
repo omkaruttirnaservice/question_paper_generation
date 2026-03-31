@@ -22,25 +22,56 @@ function PublishedTestsList() {
     const dispatch = useDispatch();
 
     const [publishedTestsList, setPublishedTestsList] = useState([]);
+
+    const [publishedExamDates, setPublishedExamDates] = useState([]);
     const [loading, setLoading] = useState(false)
 
     const [listMode, setListMode] = useState("NEW")
+    const [examDate, setExamDate] = useState("ALL")
 
     useEffect(() => {
         getExamsList();
-    }, [listMode]);
+    }, [listMode, examDate]);
+
+    useEffect(() => {
+        getPublishedExamDatesOnly()
+    }, [])
 
     function getExamsList() {
+
         const reqData = {
             url: SERVER_IP + `/api/test/list-published?type=EXAM&mode=${listMode}`,
         };
-        setLoading(true)
+        if (examDate !== "ALL") {
+            reqData.url += `&examDate=${examDate}`
+        }
+
         sendRequest(reqData, ({ data }) => {
             setLoading(false)
             if (data.length >= 1) {
                 setPublishedTestsList(data);
             } else {
                 setPublishedTestsList([]);
+            }
+        });
+    }
+
+
+    function getPublishedExamDatesOnly() {
+        /**
+         * Get the published exam dates only * 
+         */
+        const reqData = {
+            url: SERVER_IP + `/api/test/dates-published`,
+        };
+        setLoading(true)
+        sendRequest(reqData, ({ data }) => {
+            setLoading(false)
+            if (data.length >= 1) {
+                console.log(data, 'data');
+                setPublishedExamDates(data);
+            } else {
+                setPublishedExamDates([]);
             }
         });
     }
@@ -199,27 +230,56 @@ function PublishedTestsList() {
         },
     ];
 
-    const listModeChangeHandler = (e) => {
-        setListMode(e.target.value)
-    }
 
     return (
         <>
             <div className="mt-6">
                 <H3 className="text-center">Published Tests List</H3>
 
-                <div className="w-28 p-1">
 
-                    <span title='All gets all published test list, NEW gets only new tests' className='bg-red-200 rounded-full px-2 cursor-pointer'>i</span>
-                    <InputSelect
-                        label={"List mode"}
-                        name="list_mode"
-                        value={listMode}
-                        onChange={listModeChangeHandler}
-                    >
-                        <option value="NEW">Active</option>
-                        <option value="ALL">All</option>
-                    </InputSelect>
+                <div className="flex">
+
+
+
+                    <div className="w-28 p-1">
+                        <span title='All gets all published test list, NEW gets only new tests' className='bg-red-200 rounded-full px-2 cursor-pointer'>i</span>
+                        <InputSelect
+                            label={"List mode"}
+                            name="list_mode"
+                            value={listMode}
+                            onChange={(e) => {
+                                setListMode(e.target.value)
+                            }}
+                        >
+                            <option value="NEW">Active</option>
+                            <option value="ALL">All</option>
+                        </InputSelect>
+                    </div>
+
+
+                    <div className="w-28 p-1">
+                        <span title='Show the dates of published exams' className='bg-red-200 rounded-full px-2 cursor-pointer'>i</span>
+                        <InputSelect
+                            label={"Exam Date"}
+                            name="list_mode"
+                            value={examDate}
+                            onChange={(e) => {
+                                setExamDate(e.target.value)
+                            }}
+                        >
+
+                            <option value="ALL">ALL</option>
+                            {publishedExamDates.length === 0 &&
+                                <option value="">No dates found</option>
+                            }
+
+                            {publishedExamDates.length !== 0 &&
+                                publishedExamDates.map((date, idx) => <option key={idx} value={date.ptl_active_date}>{date.ptl_active_date}</option>
+                                )
+                            }
+                        </InputSelect>
+                    </div>
+
                 </div>
 
                 {loading && <p className='text-center bg-red-50 p-1'>Loading tests...</p>}

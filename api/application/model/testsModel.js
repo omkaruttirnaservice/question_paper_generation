@@ -1,4 +1,4 @@
-import { Sequelize, where } from 'sequelize';
+import { Op, Sequelize, where } from 'sequelize';
 // import sequelize from '../config/db-connect-migration.js';
 import db from '../config/db.connect.js';
 import mockDummyData from '../config/mockDummyData.js';
@@ -11,6 +11,7 @@ import { myDate } from '../config/utils.js';
 // import tn_student_list from '../schemas/tn_student_list.js';
 import { toYYYYMMDD } from '../utils/help.js';
 import { TEST_LIST_MODE } from '../config/constants.js';
+import tm_publish_test_list from '../schemas/tm_publish_test_list.js';
 
 const testsModel = {
     getTestById: async (id, type) => {
@@ -61,7 +62,18 @@ const testsModel = {
         );
     },
 
-    getPublishedList: async (type = 'EXAM', mode = 'NEW') => {
+    getPublishedList: async (type = 'EXAM', mode = 'NEW', examDate) => {
+        let where = '';
+        if (examDate) {
+            where += ` DATE_FORMAT(ptl_active_date, '%d-%m-%Y') = "${examDate}" AND`;
+        } else {
+            if (mode === 'ALL') {
+                where += ` `;
+            } else if (mode === 'NEW') {
+                where += ` ptl_active_date >= CURDATE() AND `;
+            }
+        }
+
         return await db.query(
             `SELECT 
 				JSON_ARRAYAGG(
@@ -117,13 +129,31 @@ const testsModel = {
 			ON tm_publish_test_list.id = tm_publish_test_by_post.published_test_id
 			
 			WHERE 
-                ${mode !== 'ALL' ? 'ptl_active_date >= CURDATE() AND' : ''}
+                ${where}
                 ptl_test_mode = '${type}'
 			GROUP BY tm_publish_test_list.id`,
             {
                 type: Sequelize.QueryTypes.SELECT,
             },
         );
+    },
+
+    getAllPublishedExamDates: async () => {
+        return await db.tm_publish_test_list.findAll({
+            where: {
+                mt_descp: {
+                    [Op.or]: ['EXAM', 'Test'],
+                },
+            },
+            attributes: [
+                [
+                    Sequelize.fn('DATE_FORMAT', Sequelize.col('ptl_active_date'), '%d-%m-%Y'),
+                    'ptl_active_date',
+                ],
+            ],
+            group: ['ptl_active_date'],
+            raw: true,
+        });
     },
 
     deleteTest: async (deleteId) => {

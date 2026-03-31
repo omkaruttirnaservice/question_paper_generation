@@ -33,15 +33,30 @@ const testsController = {
 
     getPublishedList: async (req, res) => {
         try {
-            // mode => 'ALL' | 'NEW'
-            // ALL => all exams even though ptl_active_date >= CURDATE()
-            // NEW => exams whose ptl_active_date >= CURDATE()
+            /**
+             * req.query 
+             * type =  EXAM | MOCK
+             * mode = 'ALL' | 'NEW'
+                    ALL => all exams even though ptl_active_date >= CURDATE()
+                    NEW => exams whose ptl_active_date >= CURDATE()
+             * examDate (optional)
+             */
 
-            console.log(req.query, '=query');
-            const { type, mode } = req.query;
+            const { type, mode, examDate = null } = req.query;
 
-            let [_testsListPublished] = await testsModel.getPublishedList(type, mode);
+            let [_testsListPublished] = await testsModel.getPublishedList(type, mode, examDate);
             return sendSuccess(res, _testsListPublished);
+        } catch (error) {
+            return sendError(res, error.message);
+        }
+    },
+
+    getPublishedExamsDateOnly: async (req, res, next) => {
+        try {
+            const pubExamDates = await testsModel.getAllPublishedExamDates();
+            console.log(pubExamDates, 'examdatea');
+
+            return sendSuccess(res, pubExamDates);
         } catch (error) {
             return sendError(res, error.message);
         }
