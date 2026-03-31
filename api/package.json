@@ -4,9 +4,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "start": "NODE_ENV=prod pm2 start ecosystem.config.cjs --env production",
+        "start": "cross-env NODE_ENV=prod pm2 start ecosystem.config.cjs --env production",
         "dbSync": "node ./bin/dbSync.js",
-        "dev": "NODE_ENV=dev nodemon app.js"
+        "dev": "cross-env  NODE_ENV=dev nodemon app.js"
     },
     "nodemonConfig": {
         "ignore": [
@@ -17,6 +17,7 @@
         "archiver": "^7.0.1",
         "cookie-parser": "~1.4.4",
         "cors": "^2.8.5",
+        "cross-env": "^10.1.0",
         "debug": "~2.6.9",
         "dotenv": "^10.0.0",
         "exceljs": "^4.4.0",
